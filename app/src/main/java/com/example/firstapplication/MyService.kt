@@ -22,12 +22,20 @@ class MyService: Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(tag, "OnStartCommand")
-        task()
+        intent?.also {
+            val receivedNumver = it.getStringExtra(takenNumber)?.toInt()
+            receivedNumver?.also {
+                val broadcastReceiverIntent = Intent(FACTORIAL_IS_COUNTED)
+                broadcastReceiverIntent.putExtra(resultNumber, factorial(it).toString())
+                sendBroadcast(broadcastReceiverIntent)
+            }
+        }
         return super.onStartCommand(intent, flags, startId)
     }
 
-    fun task() {
-        
+    fun factorial(number: Int): Long {
+        if( number == 1 ) return 1
+        return number * factorial(number - 1)
     }
+
 }
